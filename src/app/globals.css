@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --navy: #1e3a5f;
+  --coral: #ff6b6b;
+  --cream: #fff8f3;
+  --gold: #ffb84d;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--cream);
+  color: var(--navy);
+  min-height: 100vh;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--coral) 35%, white);
+  color: var(--navy);
+}
+
+@layer components {
+  .container-lilyum {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-full bg-coral px-6 py-3 text-sm font-semibold text-white transition hover:bg-coral-deep hover:shadow-lift;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-full border border-navy/20 bg-white/70 px-6 py-3 text-sm font-semibold text-navy transition hover:border-navy/40 hover:bg-white;
+  }
+
+  .section-title {
+    @apply font-display text-3xl font-semibold tracking-tight text-navy sm:text-4xl;
+  }
+
+  .section-lead {
+    @apply mt-3 max-w-2xl text-base leading-relaxed text-navy/70 sm:text-lg;
+  }
+}
