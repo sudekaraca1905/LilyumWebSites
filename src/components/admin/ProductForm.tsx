@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PRODUCT_CATEGORIES } from "@/lib/utils";
+import { ImageUploadField } from "./ImageUploadField";
 
 type ProductFormValues = {
   id?: string;
@@ -20,21 +21,6 @@ export function ProductForm({ initial }: { initial?: ProductFormValues }) {
   const [imageUrl, setImageUrl] = useState(initial?.imageUrl || "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [uploading, setUploading] = useState(false);
-
-  async function uploadImage(file: File) {
-    setUploading(true);
-    const form = new FormData();
-    form.append("file", file);
-    const res = await fetch("/api/upload", { method: "POST", body: form });
-    setUploading(false);
-    if (!res.ok) {
-      setError("Görsel yüklenemedi");
-      return;
-    }
-    const data = await res.json();
-    setImageUrl(data.url);
-  }
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -121,23 +107,12 @@ export function ProductForm({ initial }: { initial?: ProductFormValues }) {
         </label>
       </div>
 
-      <div>
-        <span className="mb-2 block text-sm font-medium">Görsel</span>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) void uploadImage(file);
-          }}
-          className="block w-full text-sm"
-        />
-        {uploading ? <p className="mt-2 text-sm text-navy/55">Yükleniyor...</p> : null}
-        {imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={imageUrl} alt="Ürün" className="mt-4 h-40 w-40 rounded-2xl object-cover" />
-        ) : null}
-      </div>
+      <ImageUploadField
+        label="Ürün fotoğrafı"
+        value={imageUrl}
+        onChange={setImageUrl}
+        onError={setError}
+      />
 
       <div className="flex flex-wrap gap-6">
         <label className="flex items-center gap-2 text-sm">

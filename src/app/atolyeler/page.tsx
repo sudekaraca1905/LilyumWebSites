@@ -36,6 +36,7 @@ export default async function WorkshopsPage() {
                 slug={w.slug}
                 ageGroup={w.ageGroup}
                 duration={w.duration}
+                imageUrl={w.imageUrl}
               />
             ))}
           </div>

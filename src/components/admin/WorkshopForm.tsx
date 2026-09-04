@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import { ImageUploadField } from "./ImageUploadField";
 
 type WorkshopFormValues = {
   id?: string;
@@ -13,6 +14,7 @@ type WorkshopFormValues = {
   output?: string | null;
   ageGroup?: string | null;
   duration?: string | null;
+  imageUrl?: string | null;
   featured?: boolean;
   published?: boolean;
   sortOrder?: number;
@@ -37,6 +39,7 @@ function arrayToLines(value?: string) {
 
 export function WorkshopForm({ initial }: { initial?: WorkshopFormValues }) {
   const router = useRouter();
+  const [imageUrl, setImageUrl] = useState(initial?.imageUrl || "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -55,6 +58,7 @@ export function WorkshopForm({ initial }: { initial?: WorkshopFormValues }) {
       output: String(form.get("output") || "") || null,
       ageGroup: String(form.get("ageGroup") || "") || null,
       duration: String(form.get("duration") || "") || null,
+      imageUrl: imageUrl || null,
       sortOrder: Number(form.get("sortOrder") || 99),
       featured: form.get("featured") === "on",
       published: form.get("published") === "on",
@@ -110,6 +114,14 @@ export function WorkshopForm({ initial }: { initial?: WorkshopFormValues }) {
           className="w-full rounded-2xl border border-navy/15 bg-cream/60 px-4 py-3 text-sm outline-none focus:border-coral"
         />
       </label>
+
+      <ImageUploadField
+        label="Atölye fotoğrafı"
+        value={imageUrl}
+        onChange={setImageUrl}
+        onError={setError}
+      />
+
       <label className="block">
         <span className="mb-2 block text-sm font-medium">Adımlar (her satır bir adım)</span>
         <textarea

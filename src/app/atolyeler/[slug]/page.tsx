@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHero, SiteShell } from "@/components/SiteShell";
@@ -41,6 +42,19 @@ export default async function WorkshopDetailPage({
       <PageHero eyebrow="Atölye" title={workshop.title} lead={workshop.summary} />
       <section className="container-lilyum grid gap-10 py-16 lg:grid-cols-[1.4fr_0.8fr]">
         <div className="space-y-8">
+          {workshop.imageUrl ? (
+            <div className="relative aspect-[16/10] overflow-hidden rounded-[1.75rem] border border-navy/10 bg-cream-warm">
+              <Image
+                src={workshop.imageUrl}
+                alt={workshop.title}
+                fill
+                className="object-cover"
+                sizes="(max-width:1024px) 100vw, 60vw"
+                priority
+              />
+            </div>
+          ) : null}
+
           <div>
             <h2 className="font-display text-2xl text-navy">Ne yapıyoruz?</h2>
             <p className="mt-3 leading-relaxed text-navy/70">{workshop.description}</p>

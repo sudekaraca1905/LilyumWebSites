@@ -31,12 +31,28 @@ export default async function AdminProductsPage() {
                 key={product.id}
                 className="flex flex-wrap items-center justify-between gap-4 px-5 py-4"
               >
-                <div>
-                  <p className="font-medium text-navy">{product.title}</p>
-                  <p className="text-sm text-navy/55">
-                    {product.category} · {formatPrice(product.price)} ·{" "}
-                    {product.published ? "Yayında" : "Taslak"}
-                  </p>
+                <div className="flex items-center gap-4">
+                  <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-cream-deep">
+                    {product.imageUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={product.imageUrl}
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-[10px] text-navy/40">
+                        Yok
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <p className="font-medium text-navy">{product.title}</p>
+                    <p className="text-sm text-navy/55">
+                      {product.category} · {formatPrice(product.price)} ·{" "}
+                      {product.published ? "Yayında" : "Taslak"}
+                    </p>
+                  </div>
                 </div>
                 <div className="flex gap-2">
                   <Link

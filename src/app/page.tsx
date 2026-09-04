@@ -126,6 +126,7 @@ export default async function HomePage() {
                 slug={w.slug}
                 ageGroup={w.ageGroup}
                 duration={w.duration}
+                imageUrl={w.imageUrl}
               />
             ))}
           </div>

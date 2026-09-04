@@ -17,6 +17,7 @@ const partialSchema = z.object({
   output: z.string().nullable().optional(),
   ageGroup: z.string().nullable().optional(),
   duration: z.string().nullable().optional(),
+  imageUrl: z.string().nullable().optional(),
   featured: z.boolean().optional(),
   published: z.boolean().optional(),
   sortOrder: z.number().optional(),
