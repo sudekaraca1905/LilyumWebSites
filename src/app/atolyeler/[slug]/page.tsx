@@ -1,8 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ImageGallery } from "@/components/ImageGallery";
 import { PageHero, SiteShell } from "@/components/SiteShell";
 import { prisma } from "@/lib/prisma";
+import { parseImages } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -36,24 +37,14 @@ export default async function WorkshopDetailPage({
 
   const steps = parseList(workshop.steps);
   const learnings = parseList(workshop.learnings);
+  const images = parseImages(workshop.images);
 
   return (
     <SiteShell>
       <PageHero eyebrow="Atölye" title={workshop.title} lead={workshop.summary} />
       <section className="container-lilyum grid gap-10 py-16 lg:grid-cols-[1.4fr_0.8fr]">
         <div className="space-y-8">
-          {workshop.imageUrl ? (
-            <div className="relative aspect-[16/10] overflow-hidden rounded-[1.75rem] border border-navy/10 bg-cream-warm">
-              <Image
-                src={workshop.imageUrl}
-                alt={workshop.title}
-                fill
-                className="object-cover"
-                sizes="(max-width:1024px) 100vw, 60vw"
-                priority
-              />
-            </div>
-          ) : null}
+          {images.length > 0 ? <ImageGallery images={images} alt={workshop.title} /> : null}
 
           <div>
             <h2 className="font-display text-2xl text-navy">Ne yapıyoruz?</h2>

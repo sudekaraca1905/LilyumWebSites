@@ -2,8 +2,8 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { PRODUCT_CATEGORIES } from "@/lib/utils";
-import { ImageUploadField } from "./ImageUploadField";
+import { PRODUCT_CATEGORIES, parseImages } from "@/lib/utils";
+import { MultiImageUpload } from "./MultiImageUpload";
 
 type ProductFormValues = {
   id?: string;
@@ -11,14 +11,14 @@ type ProductFormValues = {
   description?: string;
   category?: string;
   price?: number | null;
-  imageUrl?: string | null;
+  images?: string | null;
   featured?: boolean;
   published?: boolean;
 };
 
 export function ProductForm({ initial }: { initial?: ProductFormValues }) {
   const router = useRouter();
-  const [imageUrl, setImageUrl] = useState(initial?.imageUrl || "");
+  const [images, setImages] = useState<string[]>(parseImages(initial?.images));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -34,7 +34,7 @@ export function ProductForm({ initial }: { initial?: ProductFormValues }) {
       description: String(form.get("description") || ""),
       category: String(form.get("category") || ""),
       price: priceRaw ? Number(priceRaw) : null,
-      imageUrl: imageUrl || null,
+      images,
       featured: form.get("featured") === "on",
       published: form.get("published") === "on",
     };
@@ -107,10 +107,10 @@ export function ProductForm({ initial }: { initial?: ProductFormValues }) {
         </label>
       </div>
 
-      <ImageUploadField
-        label="Ürün fotoğrafı"
-        value={imageUrl}
-        onChange={setImageUrl}
+      <MultiImageUpload
+        label="Ürün fotoğrafları"
+        value={images}
+        onChange={setImages}
         onError={setError}
       />
 

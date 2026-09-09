@@ -1,6 +1,7 @@
 import { WorkshopCard } from "@/components/Cards";
 import { EmptyState, PageHero, SiteShell } from "@/components/SiteShell";
 import { prisma } from "@/lib/prisma";
+import { coverImage } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Atölyeler" };
@@ -36,7 +37,7 @@ export default async function WorkshopsPage() {
                 slug={w.slug}
                 ageGroup={w.ageGroup}
                 duration={w.duration}
-                imageUrl={w.imageUrl}
+                imageUrl={coverImage(w.images)}
               />
             ))}
           </div>

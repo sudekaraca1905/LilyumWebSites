@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { isAdminAuthenticated } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { serializeImages } from "@/lib/utils";
 
 async function requireAdmin() {
   const ok = await isAdminAuthenticated();
@@ -17,7 +18,7 @@ const partialSchema = z.object({
   output: z.string().nullable().optional(),
   ageGroup: z.string().nullable().optional(),
   duration: z.string().nullable().optional(),
-  imageUrl: z.string().nullable().optional(),
+  images: z.array(z.string()).optional(),
   featured: z.boolean().optional(),
   published: z.boolean().optional(),
   sortOrder: z.number().optional(),
@@ -33,12 +34,15 @@ export async function PUT(
     const body = await request.json();
     const data = partialSchema.parse(body);
 
+    const { images, steps, learnings, ...rest } = data;
+
     const workshop = await prisma.workshop.update({
       where: { id },
       data: {
-        ...data,
-        steps: data.steps ? JSON.stringify(data.steps) : undefined,
-        learnings: data.learnings ? JSON.stringify(data.learnings) : undefined,
+        ...rest,
+        steps: steps ? JSON.stringify(steps) : undefined,
+        learnings: learnings ? JSON.stringify(learnings) : undefined,
+        images: images ? serializeImages(images) : undefined,
       },
     });
 

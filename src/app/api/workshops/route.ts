@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { isAdminAuthenticated } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { slugify } from "@/lib/utils";
+import { serializeImages, slugify } from "@/lib/utils";
 
 const workshopSchema = z.object({
   title: z.string().min(2),
@@ -13,7 +13,7 @@ const workshopSchema = z.object({
   output: z.string().nullable().optional(),
   ageGroup: z.string().nullable().optional(),
   duration: z.string().nullable().optional(),
-  imageUrl: z.string().nullable().optional(),
+  images: z.array(z.string()).optional(),
   featured: z.boolean().optional(),
   published: z.boolean().optional(),
   sortOrder: z.number().optional(),
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
         output: data.output || null,
         ageGroup: data.ageGroup || null,
         duration: data.duration || null,
-        imageUrl: data.imageUrl || null,
+        images: serializeImages(data.images || []),
         featured: data.featured ?? false,
         published: data.published ?? true,
         sortOrder: data.sortOrder ?? 99,

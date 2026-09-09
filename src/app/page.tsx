@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ProductCard, WorkshopCard } from "@/components/Cards";
 import { SiteShell } from "@/components/SiteShell";
 import { prisma } from "@/lib/prisma";
-import { formatPrice } from "@/lib/utils";
+import { coverImage, formatPrice } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -126,7 +126,7 @@ export default async function HomePage() {
                 slug={w.slug}
                 ageGroup={w.ageGroup}
                 duration={w.duration}
-                imageUrl={w.imageUrl}
+                imageUrl={coverImage(w.images)}
               />
             ))}
           </div>
@@ -165,7 +165,7 @@ export default async function HomePage() {
                   description={p.description}
                   slug={p.slug}
                   category={p.category}
-                  imageUrl={p.imageUrl}
+                  imageUrl={coverImage(p.images)}
                   priceLabel={formatPrice(p.price)}
                 />
               ))}

@@ -2,14 +2,14 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { isAdminAuthenticated } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { slugify } from "@/lib/utils";
+import { serializeImages, slugify } from "@/lib/utils";
 
 const productSchema = z.object({
   title: z.string().min(2),
   description: z.string().min(5),
   category: z.string().min(2),
   price: z.union([z.number(), z.null()]).optional(),
-  imageUrl: z.string().nullable().optional(),
+  images: z.array(z.string()).optional(),
   featured: z.boolean().optional(),
   published: z.boolean().optional(),
   slug: z.string().optional(),
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
         description: data.description,
         category: data.category,
         price: data.price ?? null,
-        imageUrl: data.imageUrl || null,
+        images: serializeImages(data.images || []),
         featured: data.featured ?? false,
         published: data.published ?? true,
         slug,

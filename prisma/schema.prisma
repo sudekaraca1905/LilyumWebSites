@@ -14,7 +14,7 @@ model Product {
   description String
   price       Float?
   category    String
-  imageUrl    String?
+  images      String   @default("[]")
   featured    Boolean  @default(false)
   published   Boolean  @default(true)
   createdAt   DateTime @default(now())
@@ -32,7 +32,7 @@ model Workshop {
   output      String?
   ageGroup    String?
   duration    String?
-  imageUrl    String?
+  images      String   @default("[]")
   featured    Boolean  @default(false)
   published   Boolean  @default(true)
   sortOrder   Int      @default(0)

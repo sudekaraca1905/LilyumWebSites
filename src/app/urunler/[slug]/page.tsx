@@ -1,9 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ImageGallery } from "@/components/ImageGallery";
 import { PageHero, SiteShell } from "@/components/SiteShell";
 import { prisma } from "@/lib/prisma";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, parseImages } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -26,19 +26,13 @@ export default async function ProductDetailPage({
   const product = await prisma.product.findUnique({ where: { slug } });
   if (!product || !product.published) notFound();
 
+  const images = parseImages(product.images);
+
   return (
     <SiteShell>
       <PageHero eyebrow={product.category} title={product.title} lead={formatPrice(product.price)} />
       <section className="container-lilyum grid gap-10 py-16 lg:grid-cols-2">
-        <div className="relative aspect-square overflow-hidden rounded-[2rem] border border-navy/10 bg-[linear-gradient(135deg,#FFF1E6,#FFE8D8)]">
-          {product.imageUrl ? (
-            <Image src={product.imageUrl} alt={product.title} fill className="object-cover" />
-          ) : (
-            <div className="flex h-full items-center justify-center">
-              <Image src="/images/logo-mark.png" alt="" width={180} height={180} />
-            </div>
-          )}
-        </div>
+        <ImageGallery images={images} alt={product.title} />
         <div>
           <p className="leading-relaxed text-navy/75">{product.description}</p>
           <Link href="/iletisim" className="btn-primary mt-8">

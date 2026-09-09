@@ -1,7 +1,7 @@
 import { ProductCard } from "@/components/Cards";
 import { EmptyState, PageHero, SiteShell } from "@/components/SiteShell";
 import { prisma } from "@/lib/prisma";
-import { formatPrice } from "@/lib/utils";
+import { coverImage, formatPrice } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Ürünler" };
@@ -36,7 +36,7 @@ export default async function ProductsPage() {
                 description={p.description}
                 slug={p.slug}
                 category={p.category}
-                imageUrl={p.imageUrl}
+                imageUrl={coverImage(p.images)}
                 priceLabel={formatPrice(p.price)}
               />
             ))}

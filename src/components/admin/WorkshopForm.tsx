@@ -2,7 +2,8 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ImageUploadField } from "./ImageUploadField";
+import { parseImages } from "@/lib/utils";
+import { MultiImageUpload } from "./MultiImageUpload";
 
 type WorkshopFormValues = {
   id?: string;
@@ -14,7 +15,7 @@ type WorkshopFormValues = {
   output?: string | null;
   ageGroup?: string | null;
   duration?: string | null;
-  imageUrl?: string | null;
+  images?: string | null;
   featured?: boolean;
   published?: boolean;
   sortOrder?: number;
@@ -39,7 +40,7 @@ function arrayToLines(value?: string) {
 
 export function WorkshopForm({ initial }: { initial?: WorkshopFormValues }) {
   const router = useRouter();
-  const [imageUrl, setImageUrl] = useState(initial?.imageUrl || "");
+  const [images, setImages] = useState<string[]>(parseImages(initial?.images));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -58,7 +59,7 @@ export function WorkshopForm({ initial }: { initial?: WorkshopFormValues }) {
       output: String(form.get("output") || "") || null,
       ageGroup: String(form.get("ageGroup") || "") || null,
       duration: String(form.get("duration") || "") || null,
-      imageUrl: imageUrl || null,
+      images,
       sortOrder: Number(form.get("sortOrder") || 99),
       featured: form.get("featured") === "on",
       published: form.get("published") === "on",
@@ -115,10 +116,10 @@ export function WorkshopForm({ initial }: { initial?: WorkshopFormValues }) {
         />
       </label>
 
-      <ImageUploadField
-        label="Atölye fotoğrafı"
-        value={imageUrl}
-        onChange={setImageUrl}
+      <MultiImageUpload
+        label="Atölye fotoğrafları"
+        value={images}
+        onChange={setImages}
         onError={setError}
       />
 
