@@ -1,20 +1,31 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { AdminShell } from "@/components/AdminShell";
-import { prisma } from "@/lib/prisma";
+import { getMessages, getProducts, getWorkshops } from "@/lib/firestore";
 
-export const dynamic = "force-dynamic";
+export default function AdminDashboardPage() {
+  const [counts, setCounts] = useState<{ products: number; workshops: number; unread: number } | null>(
+    null
+  );
 
-export default async function AdminDashboardPage() {
-  const [productCount, workshopCount, unreadMessages] = await Promise.all([
-    prisma.product.count(),
-    prisma.workshop.count(),
-    prisma.contactMessage.count({ where: { read: false } }),
-  ]);
+  useEffect(() => {
+    Promise.all([getProducts(), getWorkshops(), getMessages()]).then(
+      ([products, workshops, messages]) => {
+        setCounts({
+          products: products.length,
+          workshops: workshops.length,
+          unread: messages.filter((m) => !m.read).length,
+        });
+      }
+    );
+  }, []);
 
   const cards = [
-    { label: "Ürün", value: productCount, href: "/admin/urunler" },
-    { label: "Atölye", value: workshopCount, href: "/admin/atolyeler" },
-    { label: "Okunmamış mesaj", value: unreadMessages, href: "/admin/mesajlar" },
+    { label: "Ürün", value: counts?.products ?? "–", href: "/admin/urunler" },
+    { label: "Atölye", value: counts?.workshops ?? "–", href: "/admin/atolyeler" },
+    { label: "Okunmamış mesaj", value: counts?.unread ?? "–", href: "/admin/mesajlar" },
   ];
 
   return (

@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import { createWorkshop, updateWorkshop } from "@/lib/firestore";
 import { parseImages } from "@/lib/utils";
 import { MultiImageUpload } from "./MultiImageUpload";
 
@@ -65,24 +66,18 @@ export function WorkshopForm({ initial }: { initial?: WorkshopFormValues }) {
       published: form.get("published") === "on",
     };
 
-    const res = await fetch(
-      initial?.id ? `/api/workshops/${initial.id}` : "/api/workshops",
-      {
-        method: initial?.id ? "PUT" : "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+    try {
+      if (initial?.id) {
+        await updateWorkshop(initial.id, payload);
+      } else {
+        await createWorkshop(payload);
       }
-    );
-
-    setLoading(false);
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error || "Kayıt başarısız");
-      return;
+      router.push("/admin/atolyeler");
+    } catch {
+      setError("Kayıt başarısız");
+    } finally {
+      setLoading(false);
     }
-
-    router.push("/admin/atolyeler");
-    router.refresh();
   }
 
   return (

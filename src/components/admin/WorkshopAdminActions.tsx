@@ -1,29 +1,25 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { deleteWorkshop, updateWorkshop } from "@/lib/firestore";
 
 export function WorkshopAdminActions({
   id,
   published,
+  onChanged,
 }: {
   id: string;
   published: boolean;
+  onChanged: () => void;
 }) {
-  const router = useRouter();
-
   async function toggle() {
-    await fetch(`/api/workshops/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ published: !published }),
-    });
-    router.refresh();
+    await updateWorkshop(id, { published: !published });
+    onChanged();
   }
 
   async function remove() {
     if (!confirm("Bu atölyeyi silmek istiyor musunuz?")) return;
-    await fetch(`/api/workshops/${id}`, { method: "DELETE" });
-    router.refresh();
+    await deleteWorkshop(id);
+    onChanged();
   }
 
   return (

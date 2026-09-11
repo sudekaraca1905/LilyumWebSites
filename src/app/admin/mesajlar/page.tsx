@@ -1,13 +1,20 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { AdminShell } from "@/components/AdminShell";
-import { prisma } from "@/lib/prisma";
 import { MarkMessageReadButton } from "@/components/admin/MarkMessageReadButton";
+import { getMessages, type ContactMessage } from "@/lib/firestore";
 
-export const dynamic = "force-dynamic";
+export default function AdminMessagesPage() {
+  const [messages, setMessages] = useState<ContactMessage[] | null>(null);
 
-export default async function AdminMessagesPage() {
-  const messages = await prisma.contactMessage.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+  function reload() {
+    getMessages().then(setMessages);
+  }
+
+  useEffect(() => {
+    reload();
+  }, []);
 
   return (
     <AdminShell>
@@ -15,7 +22,11 @@ export default async function AdminMessagesPage() {
       <p className="mt-2 text-navy/60">İletişim formundan gelen talepler</p>
 
       <div className="mt-8 space-y-4">
-        {messages.length === 0 ? (
+        {!messages ? (
+          <div className="rounded-3xl border border-navy/10 bg-white/80 p-10 text-center text-navy/60">
+            Yükleniyor...
+          </div>
+        ) : messages.length === 0 ? (
           <div className="rounded-3xl border border-navy/10 bg-white/80 p-10 text-center text-navy/60">
             Henüz mesaj yok.
           </div>
@@ -37,10 +48,12 @@ export default async function AdminMessagesPage() {
                   <p className="mt-1 text-sm text-navy/55">
                     {message.email}
                     {message.phone ? ` · ${message.phone}` : ""} ·{" "}
-                    {new Date(message.createdAt).toLocaleString("tr-TR")}
+                    {message.createdAt.toLocaleString("tr-TR")}
                   </p>
                 </div>
-                {!message.read ? <MarkMessageReadButton id={message.id} /> : null}
+                {!message.read ? (
+                  <MarkMessageReadButton id={message.id} onRead={reload} />
+                ) : null}
               </div>
               <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-navy/75">
                 {message.message}

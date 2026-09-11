@@ -1,6 +1,19 @@
-import { PrismaClient } from "@prisma/client";
+import { existsSync, readFileSync } from "fs";
+import { resolve } from "path";
+import { cert, initializeApp } from "firebase-admin/app";
+import { getFirestore, FieldValue } from "firebase-admin/firestore";
 
-const prisma = new PrismaClient();
+const keyPath = resolve(process.cwd(), "serviceAccountKey.json");
+if (!existsSync(keyPath)) {
+  console.error(
+    "serviceAccountKey.json bulunamadı. Firebase Console > Project settings > Service accounts > Generate new private key ile indirip proje köküne koyun (bu dosya asla commit edilmemeli)."
+  );
+  process.exit(1);
+}
+
+const serviceAccount = JSON.parse(readFileSync(keyPath, "utf8"));
+initializeApp({ credential: cert(serviceAccount) });
+const db = getFirestore();
 
 const workshops = [
   {
@@ -361,18 +374,32 @@ const workshops = [
 
 async function main() {
   for (const workshop of workshops) {
-    await prisma.workshop.upsert({
-      where: { slug: workshop.slug },
-      update: workshop,
-      create: workshop,
-    });
+    const existing = await db
+      .collection("workshops")
+      .where("slug", "==", workshop.slug)
+      .limit(1)
+      .get();
+
+    const data = {
+      ...workshop,
+      output: workshop.output ?? null,
+      ageGroup: "ageGroup" in workshop ? workshop.ageGroup : null,
+      duration: "duration" in workshop ? workshop.duration : null,
+      images: "[]",
+      featured: workshop.featured ?? false,
+      published: true,
+      updatedAt: FieldValue.serverTimestamp(),
+    };
+
+    if (existing.empty) {
+      await db.collection("workshops").add({ ...data, createdAt: FieldValue.serverTimestamp() });
+    } else {
+      await existing.docs[0].ref.update(data);
+    }
   }
 
-  await prisma.siteSettings.upsert({
-    where: { id: "main" },
-    update: {},
-    create: {
-      id: "main",
+  await db.collection("siteSettings").doc("main").set(
+    {
       email: "info@lilyum.com",
       phone: "",
       instagram: "@lilyumbaskiatolyesi",
@@ -380,16 +407,13 @@ async function main() {
       about:
         "Lilyum Baskı Atölyesi; okullarda öğrenmeyi oyunla birleştiren atölyeler düzenler ve 3D yazıcıyla kişiye özel ürünler üretir. Sloganımız: Düşle, Tasarla, Şekillendir.",
     },
-  });
+    { merge: true }
+  );
 
   console.log(`Seeded ${workshops.length} workshops`);
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

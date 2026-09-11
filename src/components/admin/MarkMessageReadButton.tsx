@@ -1,13 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { markMessageRead } from "@/lib/firestore";
 
-export function MarkMessageReadButton({ id }: { id: string }) {
-  const router = useRouter();
-
+export function MarkMessageReadButton({ id, onRead }: { id: string; onRead: () => void }) {
   async function mark() {
-    await fetch(`/api/messages/${id}`, { method: "PUT" });
-    router.refresh();
+    await markMessageRead(id);
+    onRead();
   }
 
   return (

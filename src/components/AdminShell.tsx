@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
+import { logoutAdmin, watchAdminAuth } from "@/lib/auth";
 
 const links = [
   { href: "/admin", label: "Özet" },
@@ -14,11 +15,30 @@ const links = [
 export function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = watchAdminAuth((user) => {
+      if (!user) {
+        router.replace("/admin/login");
+        return;
+      }
+      setReady(true);
+    });
+    return unsubscribe;
+  }, [router]);
 
   async function logout() {
-    await fetch("/api/auth/login", { method: "DELETE" });
+    await logoutAdmin();
     router.push("/admin/login");
-    router.refresh();
+  }
+
+  if (!ready) {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-navy/60">
+        Yükleniyor...
+      </div>
+    );
   }
 
   return (
@@ -30,6 +50,15 @@ export function AdminShell({ children }: { children: ReactNode }) {
             <p className="text-xs text-navy/50">İçerik ve ürün yönetimi</p>
           </div>
           <div className="flex items-center gap-3">
+            <a
+              href="https://github.com/collab-works/LilyumWebSites/actions/workflows/deploy.yml"
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full bg-coral px-4 py-2 text-sm font-semibold text-white hover:bg-coral-soft"
+              title="Değişiklikleri hemen siteye yansıtmak için GitHub Actions'ta 'Run workflow' butonuna basın"
+            >
+              Değişiklikleri Yayınla
+            </a>
             <Link href="/" className="text-sm text-navy/60 hover:text-coral">
               Siteye dön
             </Link>

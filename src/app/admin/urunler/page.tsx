@@ -1,13 +1,22 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { AdminShell } from "@/components/AdminShell";
 import { DeleteProductButton } from "@/components/admin/DeleteProductButton";
-import { prisma } from "@/lib/prisma";
+import { getProducts, type Product } from "@/lib/firestore";
 import { coverImage, formatPrice } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
+export default function AdminProductsPage() {
+  const [products, setProducts] = useState<Product[] | null>(null);
 
-export default async function AdminProductsPage() {
-  const products = await prisma.product.findMany({ orderBy: { createdAt: "desc" } });
+  function reload() {
+    getProducts().then(setProducts);
+  }
+
+  useEffect(() => {
+    reload();
+  }, []);
 
   return (
     <AdminShell>
@@ -22,7 +31,9 @@ export default async function AdminProductsPage() {
       </div>
 
       <div className="mt-8 overflow-hidden rounded-3xl border border-navy/10 bg-white/80">
-        {products.length === 0 ? (
+        {!products ? (
+          <div className="p-10 text-center text-navy/60">Yükleniyor...</div>
+        ) : products.length === 0 ? (
           <div className="p-10 text-center text-navy/60">Henüz ürün yok. İlk ürünü ekleyin.</div>
         ) : (
           <div className="divide-y divide-navy/10">
@@ -54,12 +65,12 @@ export default async function AdminProductsPage() {
                   </div>
                   <div className="flex gap-2">
                     <Link
-                      href={`/admin/urunler/${product.id}`}
+                      href={`/admin/urunler/duzenle?id=${product.id}`}
                       className="rounded-full border border-navy/15 px-4 py-2 text-sm hover:border-coral hover:text-coral"
                     >
                       Düzenle
                     </Link>
-                    <DeleteProductButton id={product.id} />
+                    <DeleteProductButton id={product.id} onDeleted={reload} />
                   </div>
                 </div>
               );

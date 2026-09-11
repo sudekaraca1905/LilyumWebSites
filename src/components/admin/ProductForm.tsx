@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import { createProduct, updateProduct } from "@/lib/firestore";
 import { PRODUCT_CATEGORIES, parseImages } from "@/lib/utils";
 import { MultiImageUpload } from "./MultiImageUpload";
 
@@ -39,21 +40,18 @@ export function ProductForm({ initial }: { initial?: ProductFormValues }) {
       published: form.get("published") === "on",
     };
 
-    const res = await fetch(initial?.id ? `/api/products/${initial.id}` : "/api/products", {
-      method: initial?.id ? "PUT" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    setLoading(false);
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error || "Kayıt başarısız");
-      return;
+    try {
+      if (initial?.id) {
+        await updateProduct(initial.id, payload);
+      } else {
+        await createProduct(payload);
+      }
+      router.push("/admin/urunler");
+    } catch {
+      setError("Kayıt başarısız");
+    } finally {
+      setLoading(false);
     }
-
-    router.push("/admin/urunler");
-    router.refresh();
   }
 
   return (

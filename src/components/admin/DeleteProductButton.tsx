@@ -1,14 +1,12 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { deleteProduct } from "@/lib/firestore";
 
-export function DeleteProductButton({ id }: { id: string }) {
-  const router = useRouter();
-
+export function DeleteProductButton({ id, onDeleted }: { id: string; onDeleted: () => void }) {
   async function onDelete() {
     if (!confirm("Bu ürünü silmek istediğinize emin misiniz?")) return;
-    await fetch(`/api/products/${id}`, { method: "DELETE" });
-    router.refresh();
+    await deleteProduct(id);
+    onDeleted();
   }
 
   return (

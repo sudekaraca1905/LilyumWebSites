@@ -1,9 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: "export",
   images: {
-    remotePatterns: [],
-    // local /uploads/* works from public folder by default
+    unoptimized: true,
+    remotePatterns: [
+      { protocol: "https", hostname: "firebasestorage.googleapis.com" },
+    ],
   },
 };
 

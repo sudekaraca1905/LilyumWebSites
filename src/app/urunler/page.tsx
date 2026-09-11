@@ -1,16 +1,12 @@
 import { ProductCard } from "@/components/Cards";
 import { EmptyState, PageHero, SiteShell } from "@/components/SiteShell";
-import { prisma } from "@/lib/prisma";
+import { getPublishedProducts } from "@/lib/firestore";
 import { coverImage, formatPrice } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
 export const metadata = { title: "Ürünler" };
 
 export default async function ProductsPage() {
-  const products = await prisma.product.findMany({
-    where: { published: true },
-    orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
-  });
+  const products = await getPublishedProducts();
 
   return (
     <SiteShell>

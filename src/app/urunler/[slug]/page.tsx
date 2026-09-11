@@ -2,10 +2,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ImageGallery } from "@/components/ImageGallery";
 import { PageHero, SiteShell } from "@/components/SiteShell";
-import { prisma } from "@/lib/prisma";
+import { getAllProductSlugs, getProduct } from "@/lib/firestore";
 import { formatPrice, parseImages } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
+export async function generateStaticParams() {
+  const slugs = await getAllProductSlugs();
+  return slugs.map((slug) => ({ slug }));
+}
 
 export async function generateMetadata({
   params,
@@ -13,7 +16,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = await prisma.product.findUnique({ where: { slug } });
+  const product = await getProduct(slug);
   return { title: product?.title || "Ürün" };
 }
 
@@ -23,7 +26,7 @@ export default async function ProductDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = await prisma.product.findUnique({ where: { slug } });
+  const product = await getProduct(slug);
   if (!product || !product.published) notFound();
 
   const images = parseImages(product.images);

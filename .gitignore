@@ -40,11 +40,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# prisma
-/prisma/dev.db
-/prisma/dev.db-journal
+# firebase
+serviceAccountKey.json
 
-# uploads
+# uploads (no longer used locally, images go to Firebase Storage)
 /public/uploads/*
 !/public/uploads/.gitkeep
 

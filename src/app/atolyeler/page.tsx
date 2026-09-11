@@ -1,16 +1,12 @@
 import { WorkshopCard } from "@/components/Cards";
 import { EmptyState, PageHero, SiteShell } from "@/components/SiteShell";
-import { prisma } from "@/lib/prisma";
+import { getPublishedWorkshops } from "@/lib/firestore";
 import { coverImage } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
 export const metadata = { title: "Atölyeler" };
 
 export default async function WorkshopsPage() {
-  const workshops = await prisma.workshop.findMany({
-    where: { published: true },
-    orderBy: [{ sortOrder: "asc" }, { title: "asc" }],
-  });
+  const workshops = await getPublishedWorkshops();
 
   return (
     <SiteShell>

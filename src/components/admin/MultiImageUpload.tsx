@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { uploadImage } from "@/lib/storage";
 
 type MultiImageUploadProps = {
   label?: string;
@@ -38,15 +39,13 @@ export function MultiImageUpload({
           onError?.("Sadece görsel dosyaları yükleyebilirsiniz");
           continue;
         }
-        const form = new FormData();
-        form.append("file", file);
-        const res = await fetch("/api/upload", { method: "POST", body: form });
-        if (!res.ok) {
+        try {
+          const url = await uploadImage(file);
+          next.push(url);
+        } catch {
           onError?.("Bazı görseller yüklenemedi");
           continue;
         }
-        const data = await res.json();
-        next.push(data.url);
       }
       onChange(next);
     } finally {

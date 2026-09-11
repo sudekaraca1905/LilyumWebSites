@@ -2,10 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ImageGallery } from "@/components/ImageGallery";
 import { PageHero, SiteShell } from "@/components/SiteShell";
-import { prisma } from "@/lib/prisma";
+import { getAllWorkshopSlugs, getWorkshop } from "@/lib/firestore";
 import { parseImages } from "@/lib/utils";
-
-export const dynamic = "force-dynamic";
 
 function parseList(value: string) {
   try {
@@ -16,13 +14,18 @@ function parseList(value: string) {
   }
 }
 
+export async function generateStaticParams() {
+  const slugs = await getAllWorkshopSlugs();
+  return slugs.map((slug) => ({ slug }));
+}
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const workshop = await prisma.workshop.findUnique({ where: { slug } });
+  const workshop = await getWorkshop(slug);
   return { title: workshop?.title || "Atölye" };
 }
 
@@ -32,7 +35,7 @@ export default async function WorkshopDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const workshop = await prisma.workshop.findUnique({ where: { slug } });
+  const workshop = await getWorkshop(slug);
   if (!workshop || !workshop.published) notFound();
 
   const steps = parseList(workshop.steps);

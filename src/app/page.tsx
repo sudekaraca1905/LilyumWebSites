@@ -2,24 +2,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { ProductCard, WorkshopCard } from "@/components/Cards";
 import { SiteShell } from "@/components/SiteShell";
-import { prisma } from "@/lib/prisma";
+import { getFeaturedWorkshops, getPublishedProducts } from "@/lib/firestore";
 import { coverImage, formatPrice } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
-
 export default async function HomePage() {
-  const [workshops, products] = await Promise.all([
-    prisma.workshop.findMany({
-      where: { published: true },
-      orderBy: [{ featured: "desc" }, { sortOrder: "asc" }],
-      take: 6,
-    }),
-    prisma.product.findMany({
-      where: { published: true },
-      orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
-      take: 6,
-    }),
+  const [workshops, allProducts] = await Promise.all([
+    getFeaturedWorkshops(6),
+    getPublishedProducts(),
   ]);
+  const products = allProducts.slice(0, 6);
 
   return (
     <SiteShell>

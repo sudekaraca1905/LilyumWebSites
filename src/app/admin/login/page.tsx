@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import { loginAdmin } from "@/lib/auth";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -14,24 +15,14 @@ export default function AdminLoginPage() {
     setError("");
     const form = new FormData(e.currentTarget);
 
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: form.get("username"),
-        password: form.get("password"),
-      }),
-    });
-
-    setLoading(false);
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error || "Giriş başarısız");
-      return;
+    try {
+      await loginAdmin(String(form.get("email") || ""), String(form.get("password") || ""));
+      router.push("/admin");
+    } catch {
+      setError("Kullanıcı adı veya şifre hatalı.");
+    } finally {
+      setLoading(false);
     }
-
-    router.push("/admin");
-    router.refresh();
   }
 
   return (
@@ -47,11 +38,11 @@ export default function AdminLoginPage() {
         </p>
 
         <label className="mt-8 block">
-          <span className="mb-2 block text-sm font-medium text-navy/80">Kullanıcı adı</span>
+          <span className="mb-2 block text-sm font-medium text-navy/80">E-posta</span>
           <input
-            name="username"
+            name="email"
+            type="email"
             required
-            defaultValue="admin"
             className="w-full rounded-2xl border border-navy/15 bg-cream/70 px-4 py-3 text-sm outline-none focus:border-coral"
           />
         </label>
