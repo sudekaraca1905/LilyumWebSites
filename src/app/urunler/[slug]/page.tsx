@@ -7,6 +7,9 @@ import { formatPrice, parseImages } from "@/lib/utils";
 
 export async function generateStaticParams() {
   const slugs = await getAllProductSlugs();
+  // output: "export" requires at least one static path per dynamic route,
+  // so fall back to a placeholder that resolves to notFound() below.
+  if (slugs.length === 0) return [{ slug: "__yok__" }];
   return slugs.map((slug) => ({ slug }));
 }
 
