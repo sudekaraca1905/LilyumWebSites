@@ -1,15 +1,13 @@
 import type { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/site";
 
 export const dynamic = "force-static";
-
-const SITE_URL = "https://lilyumbaskiatolyesi.com";
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/lilyum", "/admin"],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
   };
