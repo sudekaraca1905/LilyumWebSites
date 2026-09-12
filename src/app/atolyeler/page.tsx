@@ -1,9 +1,19 @@
+import type { Metadata } from "next";
 import { WorkshopCard } from "@/components/Cards";
 import { EmptyState, PageHero, SiteShell } from "@/components/SiteShell";
-import { getPublishedWorkshops } from "@/lib/firestore";
+import { getPublishedWorkshops, getSeoSettings } from "@/lib/firestore";
 import { coverImage } from "@/lib/utils";
 
-export const metadata = { title: "Atölyeler" };
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSeoSettings();
+  const page = seo.pages.atolyeler;
+  return {
+    title: page.title,
+    description: page.description,
+    alternates: { canonical: "/atolyeler" },
+    openGraph: { title: page.title, description: page.description, url: "/atolyeler" },
+  };
+}
 
 export default async function WorkshopsPage() {
   const workshops = await getPublishedWorkshops();

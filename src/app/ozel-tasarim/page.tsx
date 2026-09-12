@@ -1,7 +1,18 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero, SiteShell } from "@/components/SiteShell";
+import { getSeoSettings } from "@/lib/firestore";
 
-export const metadata = { title: "Özel Tasarım" };
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSeoSettings();
+  const page = seo.pages.ozelTasarim;
+  return {
+    title: page.title,
+    description: page.description,
+    alternates: { canonical: "/ozel-tasarim" },
+    openGraph: { title: page.title, description: page.description, url: "/ozel-tasarim" },
+  };
+}
 
 const categories = [
   {

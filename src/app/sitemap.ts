@@ -1,9 +1,8 @@
 import type { MetadataRoute } from "next";
 import { getAllProductSlugs, getAllWorkshopSlugs } from "@/lib/firestore";
+import { SITE_URL } from "@/lib/site";
 
 export const dynamic = "force-static";
-
-const SITE_URL = "https://lilyumbaskiatolyesi.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [productSlugs, workshopSlugs] = await Promise.all([

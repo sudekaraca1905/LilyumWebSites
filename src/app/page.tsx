@@ -1,9 +1,21 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ProductCard, WorkshopCard } from "@/components/Cards";
 import { SiteShell } from "@/components/SiteShell";
-import { getFeaturedWorkshops, getPublishedProducts } from "@/lib/firestore";
+import { getFeaturedWorkshops, getPublishedProducts, getSeoSettings } from "@/lib/firestore";
 import { coverImage, formatPrice } from "@/lib/utils";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSeoSettings();
+  const page = seo.pages.home;
+  return {
+    title: { absolute: page.title },
+    description: page.description,
+    alternates: { canonical: "/" },
+    openGraph: { title: page.title, description: page.description, url: "/" },
+  };
+}
 
 export default async function HomePage() {
   const [workshops, allProducts] = await Promise.all([

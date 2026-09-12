@@ -1,9 +1,19 @@
+import type { Metadata } from "next";
 import { ProductCard } from "@/components/Cards";
 import { EmptyState, PageHero, SiteShell } from "@/components/SiteShell";
-import { getPublishedProducts } from "@/lib/firestore";
+import { getPublishedProducts, getSeoSettings } from "@/lib/firestore";
 import { coverImage, formatPrice } from "@/lib/utils";
 
-export const metadata = { title: "Ürünler" };
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSeoSettings();
+  const page = seo.pages.urunler;
+  return {
+    title: page.title,
+    description: page.description,
+    alternates: { canonical: "/urunler" },
+    openGraph: { title: page.title, description: page.description, url: "/urunler" },
+  };
+}
 
 export default async function ProductsPage() {
   const products = await getPublishedProducts();

@@ -9,10 +9,12 @@ import {
   orderBy,
   query,
   serverTimestamp,
+  setDoc,
   updateDoc,
   where,
 } from "firebase/firestore";
 import { db } from "./firebase";
+import { DEFAULT_SEO_SETTINGS, type SeoSettings } from "./site";
 import { serializeImages, slugify } from "./utils";
 
 export type Product = {
@@ -308,4 +310,28 @@ export async function getMessages(): Promise<ContactMessage[]> {
 
 export async function markMessageRead(id: string) {
   await updateDoc(doc(db, "contactMessages", id), { read: true });
+}
+
+// ---- SEO settings ----
+
+export async function getSeoSettings(): Promise<SeoSettings> {
+  const snap = await getDoc(doc(db, "siteSettings", "seo"));
+  if (!snap.exists()) return DEFAULT_SEO_SETTINGS;
+  const data = snap.data() as Partial<SeoSettings>;
+  return {
+    siteName: data.siteName || DEFAULT_SEO_SETTINGS.siteName,
+    siteDescription: data.siteDescription || DEFAULT_SEO_SETTINGS.siteDescription,
+    ogImage: data.ogImage || DEFAULT_SEO_SETTINGS.ogImage,
+    pages: {
+      home: { ...DEFAULT_SEO_SETTINGS.pages.home, ...data.pages?.home },
+      urunler: { ...DEFAULT_SEO_SETTINGS.pages.urunler, ...data.pages?.urunler },
+      atolyeler: { ...DEFAULT_SEO_SETTINGS.pages.atolyeler, ...data.pages?.atolyeler },
+      ozelTasarim: { ...DEFAULT_SEO_SETTINGS.pages.ozelTasarim, ...data.pages?.ozelTasarim },
+      iletisim: { ...DEFAULT_SEO_SETTINGS.pages.iletisim, ...data.pages?.iletisim },
+    },
+  };
+}
+
+export async function updateSeoSettings(data: SeoSettings) {
+  await setDoc(doc(db, "siteSettings", "seo"), data, { merge: true });
 }

@@ -1,7 +1,18 @@
+import type { Metadata } from "next";
 import { ContactForm } from "@/components/ContactForm";
 import { PageHero, SiteShell } from "@/components/SiteShell";
+import { getSeoSettings } from "@/lib/firestore";
 
-export const metadata = { title: "İletişim" };
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSeoSettings();
+  const page = seo.pages.iletisim;
+  return {
+    title: page.title,
+    description: page.description,
+    alternates: { canonical: "/iletisim" },
+    openGraph: { title: page.title, description: page.description, url: "/iletisim" },
+  };
+}
 
 export default function ContactPage() {
   return (
