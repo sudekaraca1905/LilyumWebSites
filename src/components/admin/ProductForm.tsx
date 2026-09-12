@@ -46,7 +46,7 @@ export function ProductForm({ initial }: { initial?: ProductFormValues }) {
       } else {
         await createProduct(payload);
       }
-      router.push("/admin/urunler");
+      router.push("/lilyum/urunler");
     } catch {
       setError("Kayıt başarısız");
     } finally {

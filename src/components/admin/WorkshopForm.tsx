@@ -72,7 +72,7 @@ export function WorkshopForm({ initial }: { initial?: WorkshopFormValues }) {
       } else {
         await createWorkshop(payload);
       }
-      router.push("/admin/atolyeler");
+      router.push("/lilyum/atolyeler");
     } catch {
       setError("Kayıt başarısız");
     } finally {

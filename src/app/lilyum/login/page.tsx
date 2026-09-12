@@ -17,7 +17,7 @@ export default function AdminLoginPage() {
 
     try {
       await loginAdmin(String(form.get("email") || ""), String(form.get("password") || ""));
-      router.push("/admin");
+      router.push("/lilyum");
     } catch {
       setError("Kullanıcı adı veya şifre hatalı.");
     } finally {

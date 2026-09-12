@@ -25,7 +25,7 @@ export default function AdminProductsPage() {
           <h1 className="font-display text-3xl text-navy">Ürünler</h1>
           <p className="mt-2 text-navy/60">Sitede görünen ürün kataloğu</p>
         </div>
-        <Link href="/admin/urunler/yeni" className="btn-primary">
+        <Link href="/lilyum/urunler/yeni" className="btn-primary">
           Yeni Ürün
         </Link>
       </div>
@@ -65,7 +65,7 @@ export default function AdminProductsPage() {
                   </div>
                   <div className="flex gap-2">
                     <Link
-                      href={`/admin/urunler/duzenle?id=${product.id}`}
+                      href={`/lilyum/urunler/duzenle?id=${product.id}`}
                       className="rounded-full border border-navy/15 px-4 py-2 text-sm hover:border-coral hover:text-coral"
                     >
                       Düzenle

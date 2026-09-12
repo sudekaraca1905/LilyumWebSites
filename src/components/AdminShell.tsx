@@ -6,10 +6,10 @@ import { ReactNode, useEffect, useState } from "react";
 import { logoutAdmin, watchAdminAuth } from "@/lib/auth";
 
 const links = [
-  { href: "/admin", label: "Özet" },
-  { href: "/admin/urunler", label: "Ürünler" },
-  { href: "/admin/atolyeler", label: "Atölyeler" },
-  { href: "/admin/mesajlar", label: "Mesajlar" },
+  { href: "/lilyum", label: "Özet" },
+  { href: "/lilyum/urunler", label: "Ürünler" },
+  { href: "/lilyum/atolyeler", label: "Atölyeler" },
+  { href: "/lilyum/mesajlar", label: "Mesajlar" },
 ];
 
 export function AdminShell({ children }: { children: ReactNode }) {
@@ -20,7 +20,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   useEffect(() => {
     const unsubscribe = watchAdminAuth((user) => {
       if (!user) {
-        router.replace("/admin/login");
+        router.replace("/lilyum/login");
         return;
       }
       setReady(true);
@@ -30,7 +30,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
   async function logout() {
     await logoutAdmin();
-    router.push("/admin/login");
+    router.push("/lilyum/login");
   }
 
   if (!ready) {
@@ -77,8 +77,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
           <nav className="space-y-1">
             {links.map((link) => {
               const active =
-                link.href === "/admin"
-                  ? pathname === "/admin"
+                link.href === "/lilyum"
+                  ? pathname === "/lilyum"
                   : pathname.startsWith(link.href);
               return (
                 <Link

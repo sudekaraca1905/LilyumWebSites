@@ -27,7 +27,7 @@ export default function AdminWorkshopsPage() {
             Dokümandaki atölyeler yüklü. Yayında olup olmadığını buradan yönetebilirsiniz.
           </p>
         </div>
-        <Link href="/admin/atolyeler/yeni" className="btn-primary">
+        <Link href="/lilyum/atolyeler/yeni" className="btn-primary">
           Yeni Atölye
         </Link>
       </div>
@@ -64,7 +64,7 @@ export default function AdminWorkshopsPage() {
                   </div>
                   <div className="flex gap-2">
                     <Link
-                      href={`/admin/atolyeler/duzenle?id=${workshop.id}`}
+                      href={`/lilyum/atolyeler/duzenle?id=${workshop.id}`}
                       className="rounded-full border border-navy/15 px-4 py-2 text-sm hover:border-coral hover:text-coral"
                     >
                       Düzenle

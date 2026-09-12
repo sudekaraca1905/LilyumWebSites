@@ -23,9 +23,9 @@ export default function AdminDashboardPage() {
   }, []);
 
   const cards = [
-    { label: "Ürün", value: counts?.products ?? "–", href: "/admin/urunler" },
-    { label: "Atölye", value: counts?.workshops ?? "–", href: "/admin/atolyeler" },
-    { label: "Okunmamış mesaj", value: counts?.unread ?? "–", href: "/admin/mesajlar" },
+    { label: "Ürün", value: counts?.products ?? "–", href: "/lilyum/urunler" },
+    { label: "Atölye", value: counts?.workshops ?? "–", href: "/lilyum/atolyeler" },
+    { label: "Okunmamış mesaj", value: counts?.unread ?? "–", href: "/lilyum/mesajlar" },
   ];
 
   return (
@@ -52,7 +52,7 @@ export default function AdminDashboardPage() {
           Yeni 3D ürün eklemek için ürünler sayfasını kullanın. Görsel yükleyebilir,
           fiyat ve kategori girebilirsiniz.
         </p>
-        <Link href="/admin/urunler/yeni" className="btn-primary mt-5">
+        <Link href="/lilyum/urunler/yeni" className="btn-primary mt-5">
           Yeni Ürün Ekle
         </Link>
       </div>

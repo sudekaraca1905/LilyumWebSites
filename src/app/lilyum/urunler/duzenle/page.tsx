@@ -3,49 +3,49 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AdminShell } from "@/components/AdminShell";
-import { WorkshopForm } from "@/components/admin/WorkshopForm";
-import { getWorkshopById, type Workshop } from "@/lib/firestore";
+import { ProductForm } from "@/components/admin/ProductForm";
+import { getProductById, type Product } from "@/lib/firestore";
 
-function EditWorkshopInner() {
+function EditProductInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
-  const [workshop, setWorkshop] = useState<Workshop | null | undefined>(undefined);
+  const [product, setProduct] = useState<Product | null | undefined>(undefined);
 
   useEffect(() => {
     if (!id) {
-      router.replace("/admin/atolyeler");
+      router.replace("/lilyum/urunler");
       return;
     }
-    getWorkshopById(id).then((w) => {
-      if (!w) {
-        router.replace("/admin/atolyeler");
+    getProductById(id).then((p) => {
+      if (!p) {
+        router.replace("/lilyum/urunler");
         return;
       }
-      setWorkshop(w);
+      setProduct(p);
     });
   }, [id, router]);
 
-  if (!workshop) {
+  if (!product) {
     return <p className="text-navy/60">Yükleniyor...</p>;
   }
 
   return (
     <>
-      <h1 className="font-display text-3xl text-navy">Atölyeyi Düzenle</h1>
-      <p className="mt-2 text-navy/60">{workshop.title}</p>
+      <h1 className="font-display text-3xl text-navy">Ürünü Düzenle</h1>
+      <p className="mt-2 text-navy/60">{product.title}</p>
       <div className="mt-8">
-        <WorkshopForm initial={workshop} />
+        <ProductForm initial={product} />
       </div>
     </>
   );
 }
 
-export default function EditWorkshopPage() {
+export default function EditProductPage() {
   return (
     <AdminShell>
       <Suspense fallback={<p className="text-navy/60">Yükleniyor...</p>}>
-        <EditWorkshopInner />
+        <EditProductInner />
       </Suspense>
     </AdminShell>
   );
